@@ -5,3 +5,8 @@ authors = ["armariya <arm.armariya@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+ws = "*"
+byteorder = "*"
+num = "*"
+num-traits = "*"
+num-derive = "*"
