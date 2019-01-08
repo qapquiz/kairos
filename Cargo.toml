@@ -5,6 +5,7 @@ authors = ["armariya <arm.armariya@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+websocket = "*"
 ws = "*"
 byteorder = "*"
 num = "*"

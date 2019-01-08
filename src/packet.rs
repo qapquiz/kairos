@@ -1,7 +1,10 @@
-use crate::socket::Socket;
+use crate::server::Server;
 use crate::packet_reader::PacketReader;
 use crate::packet_writer::PacketWriter;
+use crate::remote::Remote;
 
+use std::collections::HashMap;
+use std::sync::{ Arc, RwLock };
 use std::any::Any;
 use num;
 use num_derive::FromPrimitive;
@@ -53,18 +56,57 @@ pub enum Packet {
     SCLoggedIn = 20001,
 }
 
-pub fn receive_packet(socket: &mut Socket, data: Vec<u8>) {
+//pub fn receive_packet(client_sender: &websocket::sender::Writer<std::net::TcpStream>, data: Vec<u8>) {
+//    let mut reader = PacketReader::new(data);
+//    let packet_id = reader.get_packet_id();
+//
+//    println!("packet_id: {}", packet_id);
+//}
+
+pub fn receive_packet(remote: &Remote, remotes: &Arc<RwLock<HashMap<i32, Remote>>>, data: Vec<u8>) {
     let mut reader =  PacketReader::new(data);
-    let packet_id = reader.get_packet_id().unwrap();
+    let packet_id = reader.get_packet_id();
 
     let packet = num::FromPrimitive::from_u16(packet_id);
 
     match packet {
         Some(Packet::CSLogIn) => {
-//            send_packet(socket,Packet::SCLoggedIn);
-            let test = 10 as u32;
-            let packet_writer = write!(Packet::SCLoggedIn as u16, 2, 30, 40, "stirwofwp", false);
-            socket.send(packet_writer.buffer);
+            let name = reader.read_string();
+            let age = reader.read_i8();
+
+            println!("name: {}", name);
+            println!("age: {}", age);
+
+            let read_remote = remotes.read().unwrap();
+
+            if let Some(client) = read_remote.get(&1) {
+                let mut writer = PacketWriter::new();
+
+                writer.write_packet_id(Packet::SCLoggedIn as u16);
+                writer.write_string(String::from("SERVER"));
+                writer.write_i8(20);
+                client.send(writer.buffer);
+            }
+//
+//            let mut writer = PacketWriter::new();
+//            writer.write_packet_id(Packet::SCLoggedIn as u16);
+//            writer.write_string(String::from("SERVER"));
+//            writer.write_i8(20);
+//
+//            remote.send(writer.buffer);
+//            let test = 10 as u32;
+//            let packet_writer = write!(Packet::SCLoggedIn as u16, 2, 30, 40, "stirwofwp", false);
+//            socket.send(packet_writer.buffer);
+//            println!("Hello this is Packet::CSLogIn");
+//            let name = reader.read_string();
+//            println!("read string: {}", name);
+//
+//            let mut writer = PacketWriter::new();
+//            writer.write_packet_id(20001);
+//            writer.write_string(name);
+//            println!("{:?}", writer.buffer);
+//            socket.value.send(writer.buffer.clone());
+//            socket.value.send(writer.buffer.clone());
         },
 
         None => panic!("Unknown packet id: {}", packet_id),
@@ -72,13 +114,13 @@ pub fn receive_packet(socket: &mut Socket, data: Vec<u8>) {
     }
 }
 
-pub fn send_packet(socket: &mut Socket, packet: Packet) {
-    match packet {
-        Packet::SCLoggedIn => {
-            let writer = PacketWriter::new();
-
-        },
-
-        _ => panic!("This is not send packet maybe you want to use receive_packet() function instead"),
-    }
-}
+//pub fn send_packet(socket: &mut Socket, packet: Packet) {
+//    match packet {
+//        Packet::SCLoggedIn => {
+//            let writer = PacketWriter::new();
+//
+//        },
+//
+//        _ => panic!("This is not send packet maybe you want to use receive_packet() function instead"),
+//    }
+//}

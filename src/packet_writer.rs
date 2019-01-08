@@ -1,4 +1,4 @@
-use byteorder::{BigEndian, WriteBytesExt};
+use byteorder::{LittleEndian, WriteBytesExt};
 use std::io::Result;
 
 pub struct PacketWriter {
@@ -11,7 +11,7 @@ impl PacketWriter {
     }
 
     pub fn write_packet_id(&mut self, packet_id: u16) {
-        self.buffer.write_u16::<BigEndian>(packet_id).unwrap();
+        self.buffer.write_u16::<LittleEndian>(packet_id).unwrap();
     }
 
     // Write unsigned integer int
@@ -20,23 +20,23 @@ impl PacketWriter {
     }
 
     pub fn write_u16(&mut self, number: u16) -> Result<()> {
-        self.buffer.write_u16::<BigEndian>(number)
+        self.buffer.write_u16::<LittleEndian>(number)
     }
 
     pub fn write_u24(&mut self, number: u32) -> Result<()> {
-        self.buffer.write_u24::<BigEndian>(number)
+        self.buffer.write_u24::<LittleEndian>(number)
     }
 
     pub fn write_u32(&mut self, number: u32) -> Result<()> {
-        self.buffer.write_u32::<BigEndian>(number)
+        self.buffer.write_u32::<LittleEndian>(number)
     }
 
     pub fn write_u48(&mut self, number: u64) -> Result<()> {
-        self.buffer.write_u48::<BigEndian>(number)
+        self.buffer.write_u48::<LittleEndian>(number)
     }
 
     pub fn write_u64(&mut self, number: u64) -> Result<()> {
-        self.buffer.write_u64::<BigEndian>(number)
+        self.buffer.write_u64::<LittleEndian>(number)
     }
 
     // Write signed integer int
@@ -45,32 +45,32 @@ impl PacketWriter {
     }
 
     pub fn write_i16(&mut self, number: i16) -> Result<()> {
-        self.buffer.write_i16::<BigEndian>(number)
+        self.buffer.write_i16::<LittleEndian>(number)
     }
 
     pub fn write_i24(&mut self, number: i32) -> Result<()> {
-        self.buffer.write_i24::<BigEndian>(number)
+        self.buffer.write_i24::<LittleEndian>(number)
     }
 
     pub fn write_i32(&mut self, number: i32) -> Result<()> {
-        self.buffer.write_i32::<BigEndian>(number)
+        self.buffer.write_i32::<LittleEndian>(number)
     }
 
     pub fn write_i48(&mut self, number: i64) -> Result<()> {
-        self.buffer.write_i48::<BigEndian>(number)
+        self.buffer.write_i48::<LittleEndian>(number)
     }
 
     pub fn write_i64(&mut self, number: i64) -> Result<()> {
-        self.buffer.write_i64::<BigEndian>(number)
+        self.buffer.write_i64::<LittleEndian>(number)
     }
 
     // Write float
     pub fn write_f32(&mut self, number: f32) -> Result<()> {
-        self.buffer.write_f32::<BigEndian>(number)
+        self.buffer.write_f32::<LittleEndian>(number)
     }
 
     pub fn write_f64(&mut self, number: f64) -> Result<()> {
-        self.buffer.write_f64::<BigEndian>(number)
+        self.buffer.write_f64::<LittleEndian>(number)
     }
 
     pub fn write_string(&mut self, message: String) -> Result<()> {
@@ -85,9 +85,9 @@ impl PacketWriter {
 
     pub fn write_bool(&mut self, boolean: bool) -> Result<()> {
         if boolean {
-            return self.buffer.write_u8(1);
+            self.buffer.write_u8(1)
         } else {
-            return self.buffer.write_u8(0);
+            self.buffer.write_u8(0)
         }
     }
 }
